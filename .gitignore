@@ -1,7 +1,5 @@
-# VSCode / JetBrains
-.vscode/
-.idea/
+.vscode
 .env
 .gitignore
-node_module
+node_modules
 scratch.txt
