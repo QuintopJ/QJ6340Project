@@ -1,0 +1,219 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title> Contact · NFT Mint</title>
+
+  <!-- Your site CSS + Bootstrap -->
+  <link rel="stylesheet" href="css/style.css" />
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" />
+
+  <style>
+    .contact-page{
+      position: relative;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      background: url("images/q_concat_moon.png") center / cover no-repeat fixed;
+    }
+    .contact-page::before{
+      content:""; position:absolute; inset:0; background:rgba(0,0,0,.45);
+    }
+    .contact-page > *{ position:relative; z-index:1; }
+
+    .navbar.bg-dark{
+      background-color: rgba(0, 0, 0, 0.72) !important;
+      backdrop-filter: blur(6px);
+    }
+
+    .contact-hero{
+      color:#fff; text-align:center;
+      padding: 8rem 1rem 2rem;
+    }
+
+    /* Push contact card lower to reveal background */
+    .contact-main{
+      flex: 1;
+      margin-top: 22rem; /* adjust value to taste */
+    }
+
+    .contact-card{
+      max-width: 480px;
+      margin: 0 auto 2rem;
+      border-radius: 14px;
+      background: rgba(17,17,17,.28);
+      border: 1px solid rgba(200,122,197,.25);
+      color: #f5f5f7;
+      box-shadow: 0 6px 18px rgba(0,0,0,.35);
+      backdrop-filter: blur(10px);
+      -webkit-backdrop-filter: blur(10px);
+      padding: 1rem 1.25rem;
+      transition: box-shadow .3s, border-color .3s;
+    }
+    .contact-card:hover{
+      box-shadow: 0 0 16px rgba(200,122,197,.7), 0 0 32px rgba(100,200,255,.35);
+      border-color: #c87ac5;
+    }
+
+    .form-label{ color: #eaeaea; font-size: 0.9rem; }
+    .form-control{
+      background: rgba(255,255,255,.08);
+      border: 1px solid rgba(255,255,255,.25);
+      color: #fff;
+    }
+    .form-control:focus{
+      background: rgba(255,255,255,.12);
+      border-color: #c87ac5;
+      box-shadow: 0 0 0 .15rem rgba(200,122,197,.25);
+      color:#fff;
+    }
+
+    /* Neon link styles */
+    .neon-line { color:#fff; }                    /* whole sentence white */
+    .neon-link {
+      color:#ff4fd8; 
+      font-weight: 700;
+      text-decoration: none;
+      transition: text-shadow .2s ease, filter .2s ease, color .2s ease;
+    }
+    .neon-link:hover, .neon-link:focus {
+      color:#ff4fd8;
+      text-shadow:
+        0 0 6px rgba(255,79,216,.9),
+        0 0 14px rgba(255,79,216,.7),
+        0 0 26px rgba(120,200,255,.35);
+      filter: brightness(1.05);
+    }
+
+    footer.bg-dark{
+      background-color: rgba(0,0,0,.78) !important;
+      backdrop-filter: blur(6px);
+      margin-top: auto;
+    }
+  </style>
+</head>
+<body>
+  <div class="contact-page">
+    <!-- Header -->
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark sticky-top">
+      <div class="container">
+        <a class="navbar-brand fw-bold text-primary" href="index.html">NFT Mint</a>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+          <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarNav">
+          <ul class="navbar-nav ms-auto">
+            <li class="nav-item"><a class="nav-link" href="index.html">Home</a></li>
+            <li class="nav-item"><a class="nav-link" href="projects.html">Projects</a></li>
+            <li class="nav-item"><a class="nav-link" href="about.html">About</a></li>
+            <li class="nav-item"><a class="nav-link active" href="contact.html">Contact</a></li>
+          </ul>
+        </div>
+      </div>
+    </nav>
+
+    <!-- Hero -->
+    <header class="contact-hero">
+      <div class="container">
+        <h1 class="display-6 fw-bold"></h1>
+      </div>
+    </header>
+
+    <!-- Contact form -->
+    <main class="container contact-main">
+      <div class="card shadow contact-card">
+        <div class="card-body">
+          <h2 class="h4 mb-2 text-center">Send a Message</h2>
+          <p class="text-center small mb-3 neon-line">
+            Prefer email? 
+            <a href="mailto:QuinnsDesign@hotmail.com" class="neon-link">Email me directly</a>.
+          </p>
+
+          <form id="contact-form" action="https://formspree.io/f/mwprevdw" method="POST" novalidate>
+            <input type="text" name="_gotcha" style="display:none" />
+            <input type="hidden" name="_subject" value="New message from NFT Mint site" />
+
+            <div class="row g-3">
+              <div class="col-md-6">
+                <label class="form-label" for="name">Name</label>
+                <input class="form-control" type="text" id="name" name="name" placeholder="Your name" required />
+                <div class="invalid-feedback">Please enter your name.</div>
+              </div>
+              <div class="col-md-6">
+                <label class="form-label" for="email">Email</label>
+                <input class="form-control" type="email" id="email" name="email" placeholder="you@example.com" required />
+                <div class="invalid-feedback">Please enter a valid email.</div>
+              </div>
+              <div class="col-12">
+                <label class="form-label" for="subject">Subject</label>
+                <input class="form-control" type="text" id="subject" name="subject" placeholder="Project idea, commission, etc." required />
+                <div class="invalid-feedback">Please add a subject.</div>
+              </div>
+              <div class="col-12">
+                <label class="form-label" for="message">Message</label>
+                <textarea class="form-control" id="message" name="message" rows="4" placeholder="Tell me a bit about what you need…" required></textarea>
+                <div class="invalid-feedback">Please write a short message.</div>
+              </div>
+            </div>
+
+            <div class="d-grid d-sm-flex justify-content-sm-end gap-2 mt-3">
+              <button class="btn btn-outline-secondary" type="reset">Clear</button>
+              <button class="btn btn-primary" type="submit">Send</button>
+            </div>
+
+            <div id="form-alert" class="alert mt-2 d-none" role="alert"></div>
+          </form>
+        </div>
+      </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="bg-dark text-white text-center py-3">
+      <div class="container">
+        <p class="mb-1">&copy; 2025 Quinn Harris · Personal NFT Mint</p>
+        <a href="mailto:QuinnsDesign@hotmail.com" class="text-primary text-decoration-none">
+          Email: QuinnsDesign@hotmail.com
+        </a>
+      </div>
+    </footer>
+  </div>
+
+  <!-- Scripts -->
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+  <script>
+    const form = document.getElementById('contact-form');
+    const alertBox = document.getElementById('form-alert');
+
+    function showAlert(type, msg){
+      alertBox.className = `alert alert-${type} mt-2`;
+      alertBox.textContent = msg;
+      alertBox.classList.remove('d-none');
+    }
+
+    form.addEventListener('submit', async (e) => {
+      if (!form.checkValidity()) {
+        e.preventDefault();
+        e.stopPropagation();
+        form.classList.add('was-validated');
+        return;
+      }
+      e.preventDefault();
+
+      try {
+        const data = new FormData(form);
+        const res = await fetch(form.action, { method: 'POST', body: data, headers: { 'Accept': 'application/json' } });
+        if (res.ok) {
+          form.reset();
+          form.classList.remove('was-validated');
+          showAlert('success', 'Thanks! Your message was sent.');
+        } else {
+          showAlert('danger', 'There was a problem sending. Please try again.');
+        }
+      } catch {
+        showAlert('danger', 'Network error. Please try again.');
+      }
+    });
+  </script>
+</body>
+</html>
