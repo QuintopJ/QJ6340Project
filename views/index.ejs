@@ -49,17 +49,22 @@
   </section>
 
   <!-- Featured Project -->
-  <section class="featured">
-    <h2>Featured Project</h2>
+<section class="featured">
+  <h2>Featured Project</h2>
+  <% if (featured) { %>
     <div class="project-card">
-      <img src="/images/qool_cat.png" alt="Featured Project" />
+      <img src="<%= featured.image %>" alt="<%= featured.title %>">
       <div class="project-info">
-        <h3>Project Title</h3>
-        <p>A dope project blending creativity and blockchain tech.</p>
-        <a href="/projects" class="btn btn-outline-dark">View All Projects</a>
+        <h3><%= featured.title %></h3>
+        <p><%= featured.summary %></p>
+        <a href="/projects/<%= featured.id %>" class="btn btn-outline-dark">View Project</a>
       </div>
     </div>
-  </section>
+  <% } else { %>
+    <p class="text-muted">No featured project available.</p>
+  <% } %>
+</section>
+
 
   <!-- About Section -->
   <section class="about">

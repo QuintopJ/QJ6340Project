@@ -7,12 +7,12 @@
 
   <!-- Bootstrap -->
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" />
-  <!-- Site CSS from /public -->
+  <!-- Site CSS -->
   <link rel="stylesheet" href="/css/style.css" />
 
   <style>
-    :root{
-      --parallax-speed: 0.25; /* lower = subtler */
+    :root {
+      --parallax-speed: 0.25;
     }
     html, body { height: 100%; margin: 0; background:#000; overflow-x:hidden; }
 
@@ -26,25 +26,34 @@
     }
 
     /* Parallax background */
-    .projects-bg{
-      position: fixed; inset: 0;
+    .projects-bg {
+      position: fixed;
+      inset: 0;
       background: url("/images/q_project_bg.png") center center / cover no-repeat;
-      will-change: transform; z-index: -2; transform: translateY(0);
+      will-change: transform;
+      z-index: -2;
+      transform: translateY(0);
     }
 
     /* Tint overlay */
-    .projects-tint{
-      position: fixed; inset: 0;
+    .projects-tint {
+      position: fixed;
+      inset: 0;
       background: rgba(0,0,0,.35);
-      z-index: -1; pointer-events: none;
+      z-index: -1;
+      pointer-events: none;
     }
 
     /* Navbar */
-    .navbar.bg-dark { background-color: rgba(0,0,0,0.72) !important; backdrop-filter: blur(6px); }
+    .navbar.bg-dark {
+      background-color: rgba(0,0,0,0.72) !important;
+      backdrop-filter: blur(6px);
+    }
 
     /* Hero */
     .projects-hero {
-      text-align: center; color: #fff;
+      text-align: center;
+      color: #fff;
       padding: 6rem 1rem 2rem;
       background: rgba(0, 0, 0, 0.35);
       backdrop-filter: blur(5px);
@@ -57,44 +66,69 @@
     /* Filters */
     .project-filters .btn {
       border-color: rgba(255,255,255,.3);
-      color:#fff; backdrop-filter: blur(4px);
+      color: #fff;
+      backdrop-filter: blur(4px);
     }
     .project-filters .btn.active,
-    .project-filters .btn:hover { background:#c87ac5; border-color:#c87ac5; }
+    .project-filters .btn:hover {
+      background:#c87ac5; border-color:#c87ac5;
+    }
 
-    /* Main grid glass */
+    /* Main grid (semi-transparent glass) */
     .projects-main {
-      flex: 1; padding-bottom: 5rem;
+      flex: 1;
+      padding-bottom: 5rem;
       background: rgba(0,0,0,.30);
       backdrop-filter: blur(5px);
       border-radius: 10px;
-      margin: 0 auto; width: 95%;
+      margin: 0 auto;
+      width: 95%;
     }
 
     .project-card {
-      height: 100%; border-radius: 16px; overflow: hidden;
+      height: 100%;
+      border-radius: 16px;
+      overflow: hidden;
       background: rgba(17,17,17,.25);
       border: 1px solid rgba(200,122,197,.3);
-      color: #f5f5f7; box-shadow: 0 8px 25px rgba(0,0,0,.35);
+      color: #f5f5f7;
+      box-shadow: 0 8px 25px rgba(0,0,0,.35);
       backdrop-filter: blur(8px);
       transition: transform .25s ease, box-shadow .25s ease, border-color .25s ease;
     }
-    .project-card:hover{
+    .project-card:hover {
       transform: translateY(-4px);
       box-shadow: 0 0 18px rgba(200,122,197,.6), 0 0 36px rgba(100,200,255,.35);
       border-color:#c87ac5;
     }
 
-    .project-thumb{ width:100%; aspect-ratio: 16 / 9; object-fit: cover; filter: brightness(.9) contrast(1.05); }
-    .project-title{ color:#ff4fd8; }
-    .badge-tag{ background: rgba(255,255,255,.08); border:1px solid rgba(255,255,255,.25); color:#fff; font-weight:500; }
+    .project-thumb {
+      width:100%;
+      aspect-ratio: 16 / 9;
+      object-fit: cover;
+      filter: brightness(.9) contrast(1.05);
+    }
+    .project-title { color:#ff4fd8; }
+    .badge-tag {
+      background: rgba(255,255,255,.08);
+      border:1px solid rgba(255,255,255,.25);
+      color:#fff;
+      font-weight:500;
+    }
 
-    .more-cta a.btn{ background:#c87ac5; border-color:#c87ac5; }
+    .more-cta a.btn {
+      background:#c87ac5;
+      border-color:#c87ac5;
+    }
 
-    footer.bg-dark{ background-color: rgba(0,0,0,.82) !important; backdrop-filter: blur(6px); margin-top: auto; }
+    footer.bg-dark {
+      background-color: rgba(0,0,0,.82) !important;
+      backdrop-filter: blur(6px);
+      margin-top: auto;
+    }
 
-    @media (prefers-reduced-motion: reduce){
-      .projects-bg{ transform: none !important; }
+    @media (prefers-reduced-motion: reduce) {
+      .projects-bg { transform: none !important; }
     }
   </style>
 </head>
@@ -137,69 +171,41 @@
       </div>
     </header>
 
-    <!-- Projects grid -->
+    <!-- Projects grid (DYNAMIC) -->
     <main class="projects-main">
-      <div class="container">
-        <div class="row g-4">
-          <!-- Card 1 -->
-          <div class="col-12 col-sm-6 col-lg-4">
-            <div class="card project-card h-100">
-              <img src="/images/qool_cat.png" alt="Qool Cat" class="project-thumb">
-              <div class="card-body">
-                <h3 class="h5 project-title mb-2">Qool Cat — Night Run</h3>
-                <p class="small mb-3">Neon-soaked portrait series with LA skyline + vaporwave vibes.</p>
-                <div class="d-flex flex-wrap gap-2 mb-3">
-                  <span class="badge badge-tag">1/1</span>
-                  <span class="badge badge-tag">Ethereum</span>
-                  <span class="badge badge-tag">Portrait</span>
-                </div>
-                <div class="d-flex justify-content-between align-items-center">
-                  <a href="/projects" class="btn btn-sm btn-outline-light">View</a>
-                  <a href="#" class="text-decoration-none" target="_blank">View on OpenSea →</a>
-                </div>
+  <div class="container">
+    <div class="row g-4">
+      <% projects.forEach(p => { %>
+        <div class="col-12 col-sm-6 col-lg-4">
+          <div class="card project-card h-100">
+            <img src="<%= p.image %>" alt="<%= p.title %>" class="project-thumb">
+            <div class="card-body">
+              <h3 class="h5 project-title mb-2"><%= p.title %></h3>
+              <p class="small mb-3"><%= p.summary %></p>
+              <div class="d-flex flex-wrap gap-2 mb-3">
+                <% (p.tags || []).forEach(t => { %>
+                  <span class="badge badge-tag"><%= t %></span>
+                <% }) %>
               </div>
-            </div>
-          </div>
-
-          <!-- Card 2 -->
-          <div class="col-12 col-sm-6 col-lg-4">
-            <div class="card project-card h-100">
-              <img src="/images/featured.jpg" alt="Featured Drop" class="project-thumb">
-              <div class="card-body">
-                <h3 class="h5 project-title mb-2">Free & FLY — Genesis</h3>
-                <p class="small mb-3">Motion-infused city palms and synth skies. First collection drop.</p>
-                <div class="d-flex flex-wrap gap-2 mb-3">
-                  <span class="badge badge-tag">Collection</span>
-                  <span class="badge badge-tag">Tezos</span>
-                  <span class="badge badge-tag">Vaporwave</span>
-                </div>
-                <div class="d-flex justify-content-between align-items-center">
-                  <a href="/projects" class="btn btn-sm btn-outline-light">View</a>
-                  <a href="#" class="text-decoration-none" target="_blank">Marketplace →</a>
-                </div>
-              </div>
-            </div>
-          </div>
-
-          <!-- Card 3 -->
-          <div class="col-12 col-sm-6 col-lg-4">
-            <div class="card project-card h-100">
-              <img src="/images/q_splash.png" alt="Process Study" class="project-thumb">
-              <div class="card-body">
-                <h3 class="h5 project-title mb-2">Process Study — Skyline Neon</h3>
-                <p class="small mb-3">Exploratory studies on color grading, grain, and neon bloom.</p>
-                <div class="d-flex flex-wrap gap-2 mb-3">
-                  <span class="badge badge-tag">Experiment</span>
-                  <span class="badge badge-tag">Animation</span>
-                </div>
-                <div class="d-flex justify-content-between align-items-center">
-                  <a href="/projects" class="btn btn-sm btn-outline-light">View</a>
-                  <a href="#" class="text-decoration-none" target="_blank">Process Notes →</a>
-                </div>
+              <div class="d-flex justify-content-between align-items-center">
+                <a href="/projects/<%= p.id %>" class="btn btn-sm btn-outline-light">View</a>
+                <% if (p.marketplaceUrl) { %>
+                  <a href="<%= p.marketplaceUrl %>" class="text-decoration-none" target="_blank">Marketplace →</a>
+                <% } %>
               </div>
             </div>
           </div>
         </div>
+      <% }) %>
+    </div>
+
+    <div class="text-center more-cta mt-5">
+      <p class="text-white-50 mb-3">Interested in collaborations or commissions?</p>
+      <a class="btn btn-lg btn-primary" href="/contact">Contact Me</a>
+    </div>
+  </div>
+</main>
+
 
         <!-- CTA -->
         <div class="text-center more-cta mt-5">
@@ -218,13 +224,12 @@
     </footer>
   </div>
 
-  <!-- Parallax script -->
+  <!-- Parallax -->
   <script>
     (function(){
       const bg = document.querySelector('.projects-bg');
       const prefersReduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
       if (!bg || prefersReduced) return;
-
       let ticking = false;
       function onScroll(){
         if (ticking) return;
@@ -244,4 +249,3 @@
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>
-
