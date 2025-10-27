@@ -112,6 +112,24 @@ body {
 .site-footer a { color: #c87ac5; margin-left: 1rem; text-decoration: none; }
 .site-footer a:hover { text-decoration: underline; }
 
+#wallet-connect {
+  border: 1px solid rgba(100, 200, 255, 0.6);
+  color: #b3e5ff;
+  background: rgba(17, 17, 17, 0.4);
+  text-shadow: 0 0 5px rgba(150, 255, 255, 0.8);
+  transition: all 0.25s ease;
+  backdrop-filter: blur(4px);
+  border-radius: 8px;
+}
+
+#wallet-connect:hover {
+  background: rgba(100, 200, 255, 0.2);
+  border-color: rgba(150, 255, 255, 0.8);
+  color: #fff;
+  box-shadow: 0 0 10px rgba(150, 255, 255, 0.7);
+}
+
+
 /* Responsive */
 @media (min-width: 768px) {
   .project-card { flex-direction: row; text-align: left; gap: 2rem; }
