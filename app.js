@@ -22,17 +22,17 @@ app.use(express.static(path.join(__dirname, 'public')));
 app.set('view engine', 'ejs');
 app.set('views', path.join(__dirname, 'views'));
 
-// Make a couple of values available to every view
+// Globals for all views
 app.use((req, res, next) => {
-  res.locals.title = 'NFT Mint';               // default title if one isn't passed
-  res.locals.currentPath = req.path;           // for active nav states if needed
-  res.locals.year = new Date().getFullYear();  // footer convenience
+  res.locals.title = 'NFT Mint';
+  res.locals.currentPath = req.path;
+  res.locals.year = new Date().getFullYear();
   next();
 });
 
 // ---------- Routes ----------
 
-// Home: picks a random featured project each request
+// Home (random featured project)
 app.get('/', async (req, res, next) => {
   try {
     const projects = await getAllProjects();
@@ -65,14 +65,28 @@ app.get('/projects/:id', async (req, res, next) => {
   } catch (e) { next(e); }
 });
 
-// About & Contact (you already have views/about.ejs and views/contact.ejs)
+// Static pages
 app.get('/about',  (_req, res) => res.render('about',  { title: 'About · NFT Mint' }));
 app.get('/contact',(_req, res) => res.render('contact',{ title: 'Contact · NFT Mint' }));
 
-// Optional: redirects from old static URLs
-app.get('/about.html',  (_req, res) => res.redirect(301, '/about'));
-app.get('/contact.html',(_req, res) => res.redirect(301, '/contact'));
-app.get('/projects.html',(_req, res) => res.redirect(301, '/projects'));
+// Legacy redirects
+app.get(['/about.html', '/contact.html', '/projects.html'], (req, res) => {
+  const map = {
+    '/about.html': '/about',
+    '/contact.html': '/contact',
+    '/projects.html': '/projects',
+  };
+  res.redirect(301, map[req.path]);
+});
+
+// ---------- Health + DB check ----------
+app.get('/health', (_req, res) => res.send('ok'));
+app.get('/db-ping', async (_req, res, next) => {
+  try {
+    const [rows] = await pool.query('SELECT 1 AS ok');
+    res.json(rows[0]);
+  } catch (e) { next(e); }
+});
 
 // Quick DB sanity route
 app.get('/db-test', async (_req, res, next) => {
@@ -82,36 +96,20 @@ app.get('/db-test', async (_req, res, next) => {
   } catch (e) { next(e); }
 });
 
-// ---------- 404 & error handling ----------
+// ---------- Error handling ----------
 
-// 404 for anything else
+// 404
 app.use((req, res) => {
   res.status(404).send('404 — Not Found');
 });
 
-// Central error handler (minimal)
-app.use((err, _req, res, _next) => {
-  console.error(err);
+// Central error handler
+app.use((err, req, res, _next) => {
+  console.error('❌ Server error:', err);
   res.status(500).send('500 — Something went wrong.');
 });
 
 // ---------- Start server ----------
 app.listen(PORT, () => {
-  console.log(`Server running → http://localhost:${PORT}`);
-});
-
-
-app.get('/health', (_req, res) => res.send('ok'));
-app.get('/db-ping', async (_req, res, next) => {
-  try {
-    const [rows] = await pool.query('SELECT 1 AS ok');
-    res.json(rows[0]);
-  } catch (e) { next(e); }
-});
-
-
-// Error handler (last middleware)
-app.use((err, req, res, _next) => {
-  console.error('❌ Server error:', err);        // <-- full stack in terminal
-  res.status(500).send('500 — Something went wrong.');
+  console.log(`✅ Server running → http://localhost:${PORT}`);
 });
