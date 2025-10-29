@@ -4,24 +4,38 @@ import mysql from 'mysql2/promise';
 import fs from 'fs';
 import path from 'node:path';
 
-// Resolve SSL CA if provided (DigitalOcean)
+// --- SSL selection ---
+// Preferred for DO Managed MySQL: set DB_SSL=require (no CA file needed).
+// If you really have a CA file path in DB_SSL_CA, we'll use it instead.
 let ssl;
+if (process.env.DB_SSL === 'require') {
+  ssl = { rejectUnauthorized: true };
+}
 if (process.env.DB_SSL_CA) {
-  const caPath = path.resolve(process.cwd(), process.env.DB_SSL_CA);
   try {
-    ssl = { ca: fs.readFileSync(caPath) };
+    const caPath = path.resolve(process.cwd(), process.env.DB_SSL_CA);
+    const ca = fs.readFileSync(caPath);
+    ssl = { ca }; // overrides 'require' mode with explicit CA
   } catch (err) {
-    console.warn(`⚠️ Could not read DB_SSL_CA at ${caPath}:`, err.message);
+    console.warn(`⚠️ Could not read DB_SSL_CA file: ${err.message}`);
   }
 }
 
+const {
+  DB_HOST = '127.0.0.1',
+  DB_PORT = '3306',
+  DB_USER,
+  DB_PASSWORD,
+  DB_DATABASE, // <-- use this (NOT DB_NAME)
+} = process.env;
+
 export const pool = mysql.createPool({
-  host: process.env.DB_HOST || '127.0.0.1',
-  port: Number(process.env.DB_PORT || 3306),
-  user: process.env.DB_USER,
-  password: process.env.DB_PASSWORD,
-  database: process.env.DB_NAME,
-  ssl, // undefined locally; { ca: ... } on DO
+  host: DB_HOST,
+  port: Number(DB_PORT),
+  user: DB_USER,
+  password: DB_PASSWORD,
+  database: DB_DATABASE,   // <-- fixed
+  ssl,                     // undefined locally; SSL on DO
   waitForConnections: true,
   connectionLimit: 10,
   maxIdle: 10,
@@ -30,7 +44,7 @@ export const pool = mysql.createPool({
   keepAliveInitialDelay: 0,
 });
 
-// Small helper so app.js can test quickly if needed
+// Helpers
 export async function dbPing() {
   const [rows] = await pool.query('SELECT 1 AS ok');
   return rows[0];
@@ -38,7 +52,7 @@ export async function dbPing() {
 
 export async function getAllProjects() {
   const [rows] = await pool.query(
-    'SELECT id, title, image, summary, description, tags, marketplaceUrl FROM projects ORDER BY id DESC'
+    'SELECT id, project_name AS title, img_url AS image, project_description AS description, quantity, price_eth, open_date_gmt, royalty_percent, active FROM projects ORDER BY id DESC'
   );
   return rows;
 }
@@ -51,12 +65,14 @@ export async function getProjectById(id) {
   return rows[0] || null;
 }
 
-// Optional: log a friendly startup message (one-time)
+// Startup probe
 (async () => {
   try {
     const who = await dbPing();
-    const mode = process.env.DB_SSL_CA ? 'DigitalOcean/SSL' : 'Local';
-    console.log(`✅ DB ready (${mode}). Ping:`, who);
+    const mode = ssl
+      ? (process.env.DB_SSL_CA ? 'SSL (CA file)' : 'SSL (require)')
+      : 'No SSL';
+    console.log(`✅ DB ready [${mode}] Ping:`, who);
   } catch (e) {
     console.error('❌ DB connection failed:', e.message);
   }
