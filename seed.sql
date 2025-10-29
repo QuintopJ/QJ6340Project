@@ -1,37 +1,43 @@
-USE nft_mint;
+USE defaultdb;
 
-CREATE TABLE IF NOT EXISTS projects (
-  id INT AUTO_INCREMENT PRIMARY KEY,
-  title VARCHAR(255) NOT NULL,
-  image VARCHAR(255) NOT NULL,
-  summary TEXT,
-  description TEXT,
-  tags JSON,
-  marketplaceUrl VARCHAR(512)
+DROP TABLE IF EXISTS projects;
+
+CREATE TABLE projects (
+  id                   INT UNSIGNED NOT NULL AUTO_INCREMENT,
+  project_name         VARCHAR(150)   NOT NULL,
+  img_url              VARCHAR(500)   NOT NULL,
+  project_description  VARCHAR(2500)  NOT NULL,
+  quantity             INT            NOT NULL,
+  price_eth            DECIMAL(10,2)  NOT NULL,
+  open_date_gmt        DATETIME       NOT NULL,
+  royalty_percent      DECIMAL(5,2)   NOT NULL,
+  active               TINYINT(1)     NOT NULL DEFAULT 0,
+  marketplace_url      VARCHAR(500)   NULL,
+  PRIMARY KEY (id)
 );
 
-INSERT INTO projects (title, image, summary, description, tags, marketplaceUrl) VALUES
-('Qool Cat - Night Run',
- '/images/qool_cat.png',
- 'Neon-soaked portrait series with LA vaporwave vibes.',
- 'A portrait-driven set exploring neon bloom, film grain, and LA''s midnight color palette.',
- JSON_ARRAY('1/1','Ethereum','Portrait'),
- 'https://opensea.io/');
+INSERT INTO projects (
+  project_name, img_url, project_description, quantity, price_eth,
+  open_date_gmt, royalty_percent, active, marketplace_url
+) VALUES
+(
+  'Project 1',
+  'https://quinn-nft-mint-cdn.sfo3.cdn.digitaloceanspaces.com/Images/featured.jpg',
+  'This is a short description of the first project.',
+  25, 1.0, '2024-02-01 09:00:00', 7.00, 1, 'https://opensea.io'
+),
+(
+  'Project 2',
+  'https://quinn-nft-mint-cdn.sfo3.cdn.digitaloceanspaces.com/Images/q_splash.png',
+  'This is a short description of the second project.',
+  64, 1.5, '2023-12-15 07:30:00', 5.00, 1, 'https://opensea.io'
+),
+(
+  'Project 3',
+  'https://quinn-nft-mint-cdn.sfo3.cdn.digitaloceanspaces.com/Images/qool_cat.png',
+  'This is a short description of the third project.',
+  512, 2.0, '2024-03-19 05:00:00', 2.00, 1, 'https://opensea.io'
+);
 
-INSERT INTO projects (title, image, summary, description, tags, marketplaceUrl) VALUES
-('Free & FLY - Genesis',
- '/images/featured.jpg',
- 'Motion-infused city palms and synth skies.',
- 'First collection drop with retro-futurist tones and graded neon atmospherics.',
- JSON_ARRAY('Collection','Tezos','Vaporwave'),
- 'https://opensea.io/');
-
-INSERT INTO projects (title, image, summary, description, tags, marketplaceUrl) VALUES
-('Process Study - Skyline Neon',
- '/images/q_splash.png',
- 'Color grading, grain, and neon bloom experiments.',
- 'Iterations on glow pipelines and motion textures to define the visual language.',
- JSON_ARRAY('Experiment','Animation'),
- NULL);
-
-SELECT id, title, image FROM projects;
+-- sanity check
+SELECT id, project_name, LEFT(img_url,60) AS img, active FROM projects;
