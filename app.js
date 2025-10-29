@@ -99,3 +99,19 @@ app.use((err, _req, res, _next) => {
 app.listen(PORT, () => {
   console.log(`Server running → http://localhost:${PORT}`);
 });
+
+
+app.get('/health', (_req, res) => res.send('ok'));
+app.get('/db-ping', async (_req, res, next) => {
+  try {
+    const [rows] = await pool.query('SELECT 1 AS ok');
+    res.json(rows[0]);
+  } catch (e) { next(e); }
+});
+
+
+// Error handler (last middleware)
+app.use((err, req, res, _next) => {
+  console.error('❌ Server error:', err);        // <-- full stack in terminal
+  res.status(500).send('500 — Something went wrong.');
+});
