@@ -1,32 +1,24 @@
-// utils/database.js
 import mysql from 'mysql2/promise';
-import fs from 'fs';
-import path from 'node:path';
-import { fileURLToPath } from 'node:url';
-import 'dotenv/config';
 
-const __filename = fileURLToPath(import.meta.url);
-const __dirname  = path.dirname(__filename);
+const {
+  DB_HOST,
+  DB_PORT = 25060,
+  DB_USER,
+  DB_PASSWORD,
+  DB_NAME,
+  DB_SSL
+} = process.env;
 
-// Resolve CA path from project root regardless of where node is started
-const caPath = process.env.DB_SSL_CA
-  ? path.resolve(process.cwd(), process.env.DB_SSL_CA)
-  : null;
-
-if (!caPath || !fs.existsSync(caPath)) {
-  console.warn('⚠️  CA certificate not found at', caPath, '(set DB_SSL_CA in .env)');
-}
-
-export const pool = mysql.createPool({
-  host: process.env.DB_HOST,
-  port: Number(process.env.DB_PORT || 3306),
-  user: process.env.DB_USER,
-  password: process.env.DB_PASS,
-  database: process.env.DB_NAME,
+export const pool = await mysql.createPool({
+  host: DB_HOST,
+  port: DB_PORT,
+  user: DB_USER,
+  password: DB_PASSWORD,
+  database: DB_NAME,
+  ssl: DB_SSL === 'require' ? { rejectUnauthorized: true } : undefined,
   waitForConnections: true,
-  connectionLimit: 5,
-  queueLimit: 0,
-  ssl: caPath ? { ca: fs.readFileSync(caPath) } : undefined, // DO requires SSL
+  connectionLimit: 10,
+  queueLimit: 0
 });
 
 export async function getAllProjects() {
@@ -36,5 +28,5 @@ export async function getAllProjects() {
 
 export async function getProjectById(id) {
   const [rows] = await pool.query('SELECT * FROM projects WHERE id = ?', [id]);
-  return rows[0];
+  return rows[0] || null;
 }
