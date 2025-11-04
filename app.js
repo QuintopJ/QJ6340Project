@@ -3,7 +3,8 @@ import 'dotenv/config';
 import express from 'express';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
-import { getAllProjects, getProjectById, pool } from './db.js';
+import { getAllProjects, getProjectById, pool, pingDB } from './db.js';
+
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname  = path.dirname(__filename);
