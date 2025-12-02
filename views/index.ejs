@@ -13,6 +13,10 @@
   <!-- Site CSS (served from /public) -->
   <link rel="stylesheet" href="/css/style.css" />
 
+  <link rel="stylesheet" href="/css/style.css" />
+<link rel="stylesheet" href="/css/chatbot.css" />
+
+
   <!-- Bootstrap CSS -->
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" />
 </head>
@@ -103,10 +107,48 @@
     </div>
   </footer>
 
-  <!-- Bootstrap JS -->
-  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+  <!-- AI Chatbot Widget -->
+<div id="chatbot-container" class="chatbot-container">
+  <div class="chatbot-window" id="chatbot-window">
+    <div class="chatbot-header">
+      <div class="chatbot-header-title">
+        <span>AI NFT Assistant</span>
+        <span>Ask me about this site, NFTs, or minting.</span>
+      </div>
+      <button id="chatbot-close" aria-label="Close chat">×</button>
+    </div>
 
-  <!-- Optional site JS (served from /public/js) -->
-  <script type="module" src="/js/index.js"></script>
+    <div id="chatbot-messages" class="chatbot-messages">
+      <div class="message bot">
+        Hey! I’m your on-site assistant. Ask me about the project, NFTs, wallets, or how to get started.
+      </div>
+    </div>
+
+    <form id="chatbot-form" class="chatbot-input-row">
+      <input
+        id="chatbot-input"
+        type="text"
+        placeholder="Ask a question..."
+        autocomplete="off"
+      />
+      <button type="submit">Send</button>
+    </form>
+  </div>
+
+  <button id="chatbot-toggle" class="chatbot-toggle">
+    <span>💬</span> Chat with Quinn AI
+  </button>
+</div>
+
+
+<!-- Existing scripts -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+
+<!-- Only on index.ejs you already have: -->
+<script type="module" src="/js/index.js"></script>
+
+<!-- Chatbot logic (all pages) -->
+<script src="/js/chatbot.js"></script>
 </body>
 </html>
+
