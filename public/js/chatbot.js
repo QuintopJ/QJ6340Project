@@ -27,35 +27,50 @@
 
     // Very simple "AI-ish" keyword routing for now
     if (text.includes("nft") || text.includes("token")) {
-      return "An NFT (non-fungible token) is a unique digital asset stored on the blockchain. On this site, my projects are NFTs you can view, learn about, and mint.";
+      return "An NFT (non-fungible token) is a unique digital asset stored on the blockchain. In this project, NFTs are tied to a collection and can be displayed or minted depending on how the site is configured.";
     }
 
     if (text.includes("mint")) {
-      return "Minting is the process of creating a new NFT on the blockchain. Once you connect your wallet, you’ll be able to mint directly from the project page when that feature is enabled.";
+      return "Minting is the process of creating a new NFT on the blockchain. On this site, minting happens through the wallet connection (ex: MetaMask) and a transaction approval.";
     }
 
     if (text.includes("wallet") || text.includes("metamask")) {
-      return "You can connect a Web3 wallet like MetaMask using the Connect Wallet button in the navbar. Make sure you're on the right network and have some test ETH if you're on a testnet.";
+      return "You can connect a Web3 wallet like MetaMask using the Connect Wallet button. Make sure you're on the right network and have some ETH if needed.";
     }
 
     if (text.includes("project") || text.includes("collection")) {
-      return "You can explore all current collections on the Projects page. Click into any project card to see details, images, and minting info.";
+      return "You can explore collections on the Projects page. Each project card shows info and links related to that collection.";
     }
 
-    if (text.includes("quinn") || text.includes("you")) {
-      return "I’m Quinn’s on-site AI assistant. I’m here to explain the basics of the project, NFTs, and how to navigate the site.";
-    }
+    return "I can help with NFTs, collections, wallet connections, and live OpenSea collection info if you paste an OpenSea collection link.";
+  }
 
-    if (text.includes("contact") || text.includes("email") || text.includes("reach")) {
-      return "You can reach out through the Contact page using the form there. I’m just the chat assistant, but Quinn reads real messages from that form.";
-    }
+  // -------- OpenSea live collection lookup --------
+  async function tryOpenSeaCollection(text) {
+    const match = text.match(/opensea\.io\/collection\/([a-zA-Z0-9\-]+)/i);
+    if (!match) return null;
 
-    if (text.includes("help")) {
-      return "I can help with: what NFTs are, how wallets work, what minting means, and where to find things on this site. Try asking: “What is minting?” or “Where are the projects?”";
-    }
+    const slug = match[1];
 
-    // Generic fallback
-    return "I may not have a perfect AI answer for that yet, but I can help with NFTs, minting, wallets, and navigating this site. Try asking about one of those, or say “help.”";
+    try {
+      const r = await fetch(`/api/nft/opensea?slug=${encodeURIComponent(slug)}`);
+      const data = await r.json();
+
+      if (data?.error) return "I couldn’t fetch that collection right now.";
+      if (data?.message) return data.message;
+
+      const floor = data.floorEth ? `${data.floorEth} ETH` : "N/A";
+
+      return (
+        `OpenSea Live Info:\n` +
+        `• ${data.name}\n` +
+        `• Floor: ${floor}\n` +
+        `• Supply: ${data.supply ?? "N/A"}\n` +
+        `• Owners: ${data.owners ?? "N/A"}`
+      );
+    } catch (_err) {
+      return "There was an issue reaching OpenSea.";
+    }
   }
 
   toggleBtn.addEventListener("click", () => {
@@ -72,7 +87,8 @@
     windowEl.classList.remove("open");
   });
 
-  form.addEventListener("submit", (e) => {
+  // ✅ Corrected: async submit handler + OpenSea first
+  form.addEventListener("submit", async (e) => {
     e.preventDefault();
     const text = input.value.trim();
     if (!text) return;
@@ -80,6 +96,14 @@
     appendMessage(text, "user");
     input.value = "";
 
+    // 🔍 Try OpenSea first (paste a link like https://opensea.io/collection/azuki)
+    const live = await tryOpenSeaCollection(text);
+    if (live) {
+      appendMessage(live, "bot");
+      return;
+    }
+
+    // Fallback to local keyword-based replies
     const reply = getBotReply(text);
     setTimeout(() => appendMessage(reply, "bot"), 250);
   });
