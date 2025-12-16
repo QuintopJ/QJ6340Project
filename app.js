@@ -16,18 +16,28 @@ const PORT = process.env.PORT || 3000;
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
-// Serve static assets
+// Static assets (/public => /css, /js, /images)
 app.use(express.static(path.join(__dirname, "public")));
 
-// Views
+// View engine
 app.set("view engine", "ejs");
 app.set("views", path.join(__dirname, "views"));
+
+// Globals for all views
+app.use((_req, res, next) => {
+  res.locals.title = "NFT Mint";
+  next();
+});
 
 // ---------- Page routes ----------
 app.get("/", async (_req, res, next) => {
   try {
     const projects = await getAllProjects();
-    res.render("index", { projects });
+
+    // ✅ IMPORTANT: always define featured so index.ejs never crashes
+    const featured = (projects && projects.length > 0) ? projects[0] : null;
+
+    res.render("index", { projects, featured });
   } catch (e) {
     next(e);
   }
@@ -42,7 +52,8 @@ app.get("/projects", async (_req, res, next) => {
   }
 });
 
-app.get("/project/:id", async (req, res, next) => {
+// NOTE: your templates use /projects/<id> in some places
+app.get("/projects/:id", async (req, res, next) => {
   try {
     const project = await getProjectById(req.params.id);
     if (!project) return res.status(404).send("Project not found");
@@ -90,8 +101,14 @@ app.get("/api/nft/opensea", async (req, res) => {
       },
     });
 
+    // ✅ Return useful debug info if OpenSea blocks (403 / 429 / etc.)
     if (!r.ok) {
-      return res.status(r.status).json({ error: "Failed to fetch OpenSea data" });
+      const body = await r.text().catch(() => "");
+      return res.status(r.status).json({
+        error: "OpenSea request failed",
+        status: r.status,
+        bodyPreview: body.slice(0, 250),
+      });
     }
 
     const data = await r.json();
@@ -118,12 +135,12 @@ app.get("/api/nft/opensea", async (req, res) => {
 // ---------- Error handling ----------
 
 // 404
-app.use((req, res) => {
+app.use((_req, res) => {
   res.status(404).send("404 — Not Found");
 });
 
 // Central error handler
-app.use((err, req, res, _next) => {
+app.use((err, _req, res, _next) => {
   console.error("❌ Server error:", err);
   res.status(500).send("500 — Something went wrong.");
 });
