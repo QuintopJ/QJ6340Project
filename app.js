@@ -118,21 +118,18 @@ const r = await fetch(url, {
 
     if (!c) return res.json({ message: "No collection found." });
 
-    res.json({
-      name: c.name,
-      slug: c.collection,
-      description: c.description,
-      image: c.image_url,
-      supply: c.total_supply,
-      owners: c.num_owners,
-      floorEth: c.floor_price,
-      externalUrl: c.external_url,
-      updatedAt: new Date().toISOString(),
-    });
-  } catch (err) {
-    res.status(500).json({ error: "Server error", detail: String(err) });
-  }
+   res.json({
+  name: c.name,
+  slug: c.slug,
+  description: c.description,
+  image: c.image_url,
+  supply: c.stats?.total_supply ?? null,
+  owners: c.stats?.num_owners ?? null,
+  floorEth: c.stats?.floor_price ?? null,
+  externalUrl: `https://opensea.io/collection/${c.slug}`,
+  updatedAt: new Date().toISOString(),
 });
+
 
 // ---------- Error handling ----------
 
