@@ -89,22 +89,22 @@ app.get("/db-test", async (_req, res, next) => {
 app.get("/api/nft/opensea", async (req, res) => {
   try {
     const { slug } = req.query;
-    if (!slug) return res.status(400).json({ error: "Missing collection slug" });
+    if (!slug) {
+      return res.status(400).json({ error: "Missing collection slug" });
+    }
 
     const url = `https://api.opensea.io/api/v2/collections/${encodeURIComponent(slug)}`;
 
-const r = await fetch(url, {
-  headers: {
-    accept: "application/json",
-    "x-api-key": process.env.OPENSEA_API_KEY,
-    "user-agent": "NFT-Chatbot/1.0",
-  },
-});
+    const r = await fetch(url, {
+      headers: {
+        accept: "application/json",
+        "x-api-key": process.env.OPENSEA_API_KEY,
+        "user-agent": "NFT-Chatbot/1.0",
+      },
+    });
 
-
-    // ✅ Return useful debug info if OpenSea blocks (403 / 429 / etc.)
     if (!r.ok) {
-      const body = await r.text().catch(() => "");
+      const body = await r.text();
       return res.status(r.status).json({
         error: "OpenSea request failed",
         status: r.status,
@@ -115,18 +115,26 @@ const r = await fetch(url, {
     const data = await r.json();
     const c = data.collection;
 
-    if (!c) return res.json({ message: "No collection found." });
+    if (!c) {
+      return res.json({ message: "No collection found." });
+    }
 
-   res.json({
-  name: c.name,
-  slug: c.slug,
-  description: c.description,
-  image: c.image_url,
-  supply: c.stats?.total_supply ?? null,
-  owners: c.stats?.num_owners ?? null,
-  floorEth: c.stats?.floor_price ?? null,
-  externalUrl: `https://opensea.io/collection/${c.slug}`,
-  updatedAt: new Date().toISOString(),
+    res.json({
+      name: c.name,
+      slug: c.slug,
+      description: c.description,
+      image: c.image_url,
+      supply: c.stats?.total_supply ?? null,
+      owners: c.stats?.num_owners ?? null,
+      floorEth: c.stats?.floor_price ?? null,
+      externalUrl: `https://opensea.io/collection/${c.slug}`,
+      updatedAt: new Date().toISOString(),
+    });
+
+  } catch (err) {
+    console.error("OpenSea error:", err);
+    res.status(500).json({ error: "Server error" });
+  }
 });
 
 
