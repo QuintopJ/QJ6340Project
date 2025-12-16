@@ -25,51 +25,37 @@
 
     if (!text) return "Try asking me something about NFTs, wallets, or this site.";
 
+    // Very simple "AI-ish" keyword routing for now
     if (text.includes("nft") || text.includes("token")) {
-      return "An NFT is a unique digital asset stored on the blockchain. This site is set up to explore NFT collections and projects with a clean portfolio vibe.";
+      return "An NFT (non-fungible token) is a unique digital asset stored on the blockchain. On this site, my projects are NFTs you can view, learn about, and mint.";
     }
 
     if (text.includes("mint")) {
-      return "Minting is creating a new NFT on-chain. If minting is enabled, you’d connect your wallet and approve a transaction.";
+      return "Minting is the process of creating a new NFT on the blockchain. Once you connect your wallet, you’ll be able to mint directly from the project page when that feature is enabled.";
     }
 
     if (text.includes("wallet") || text.includes("metamask")) {
-      return "Use the Connect Wallet button to link MetaMask. Make sure you're on the right network and have ETH if needed.";
+      return "You can connect a Web3 wallet like MetaMask using the Connect Wallet button in the navbar. Make sure you're on the right network and have some test ETH if you're on a testnet.";
     }
 
-    return "If you paste an OpenSea collection link (like /collection/azuki), I can try pulling live collection info.";
-  }
-
-  async function tryOpenSeaCollection(text) {
-    const match = text.match(/opensea\.io\/collection\/([a-zA-Z0-9\-]+)/i);
-    if (!match) return null;
-
-    const slug = match[1];
-
-    try {
-      const r = await fetch(`/api/nft/opensea?slug=${encodeURIComponent(slug)}`);
-      const data = await r.json();
-
-      // ✅ Show the real reason if OpenSea blocks the request
-      if (data?.status) {
-        return `OpenSea blocked the request (status ${data.status}). Try again later, or we may need an API key.\n${data.bodyPreview ? "Details: " + data.bodyPreview : ""}`;
-      }
-
-      if (data?.error) return `Couldn’t fetch that collection: ${data.error}`;
-      if (data?.message) return data.message;
-
-      const floor = data.floorEth ? `${data.floorEth} ETH` : "N/A";
-
-      return (
-        `OpenSea Live Info:\n` +
-        `• ${data.name}\n` +
-        `• Floor: ${floor}\n` +
-        `• Supply: ${data.supply ?? "N/A"}\n` +
-        `• Owners: ${data.owners ?? "N/A"}`
-      );
-    } catch (_err) {
-      return "There was an issue reaching the server endpoint.";
+    if (text.includes("project") || text.includes("collection")) {
+      return "You can explore all current collections on the Projects page. Click into any project card to see details, images, and minting info.";
     }
+
+    if (text.includes("quinn") || text.includes("you")) {
+      return "I’m Quinn’s on-site AI assistant. I’m here to explain the basics of the project, NFTs, and how to navigate the site.";
+    }
+
+    if (text.includes("contact") || text.includes("email") || text.includes("reach")) {
+      return "You can reach out through the Contact page using the form there. I’m just the chat assistant, but Quinn reads real messages from that form.";
+    }
+
+    if (text.includes("help")) {
+      return "I can help with: what NFTs are, how wallets work, what minting means, and where to find things on this site. Try asking: “What is minting?” or “Where are the projects?”";
+    }
+
+    // Generic fallback
+    return "I may not have a perfect AI answer for that yet, but I can help with NFTs, minting, wallets, and navigating this site. Try asking about one of those, or say “help.”";
   }
 
   toggleBtn.addEventListener("click", () => {
@@ -82,21 +68,17 @@
     }
   });
 
-  closeBtn?.addEventListener("click", () => windowEl.classList.remove("open"));
+  closeBtn?.addEventListener("click", () => {
+    windowEl.classList.remove("open");
+  });
 
-  form.addEventListener("submit", async (e) => {
+  form.addEventListener("submit", (e) => {
     e.preventDefault();
     const text = input.value.trim();
     if (!text) return;
 
     appendMessage(text, "user");
     input.value = "";
-
-    const live = await tryOpenSeaCollection(text);
-    if (live) {
-      appendMessage(live, "bot");
-      return;
-    }
 
     const reply = getBotReply(text);
     setTimeout(() => appendMessage(reply, "bot"), 250);
