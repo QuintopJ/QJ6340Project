@@ -94,12 +94,14 @@ app.get("/api/nft/opensea", async (req, res) => {
 
     const url = `https://api.opensea.io/api/v2/collections/${encodeURIComponent(slug)}`;
 
-    const r = await fetch(url, {
-      headers: {
-        accept: "application/json",
-        "user-agent": "NFT-Chatbot/1.0",
-      },
-    });
+const r = await fetch(url, {
+  headers: {
+    accept: "application/json",
+    "x-api-key": process.env.OPENSEA_API_KEY,
+    "user-agent": "NFT-Chatbot/1.0",
+  },
+});
+
 
     // ✅ Return useful debug info if OpenSea blocks (403 / 429 / etc.)
     if (!r.ok) {
