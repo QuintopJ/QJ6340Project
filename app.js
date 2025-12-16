@@ -1,7 +1,6 @@
 // app.js
 import "dotenv/config";
 import express from "express";
-import fetch from "node-fetch";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 import { getAllProjects, getProjectById, pool, pingDB } from "./db.js";
