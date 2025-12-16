@@ -88,54 +88,51 @@ app.get("/db-test", async (_req, res, next) => {
 // GET /api/nft/opensea?slug=azuki
 app.get("/api/nft/opensea", async (req, res) => {
   try {
-    const { slug } = req.query;
+    const slug = req.query.slug;
     if (!slug) {
       return res.status(400).json({ error: "Missing collection slug" });
     }
 
-    const url = `https://api.opensea.io/api/v2/collections/${encodeURIComponent(slug)}`;
+    const url = `https://api.opensea.io/api/v2/collections/${slug}`;
 
     const r = await fetch(url, {
       headers: {
-        accept: "application/json",
-        "x-api-key": process.env.OPENSEA_API_KEY,
-        "user-agent": "NFT-Chatbot/1.0",
-      },
+        "accept": "application/json",
+        "x-api-key": process.env.OPENSEA_API_KEY
+      }
     });
 
     if (!r.ok) {
-      const body = await r.text();
-      return res.status(r.status).json({
-        error: "OpenSea request failed",
-        status: r.status,
-        bodyPreview: body.slice(0, 250),
-      });
+      const text = await r.text();
+      throw new Error(`OpenSea error: ${r.status} ${text}`);
     }
 
     const data = await r.json();
-    const c = data.collection;
 
-    if (!c) {
-      return res.json({ message: "No collection found." });
-    }
+    // IMPORTANT: v2 structure
+    const c = data;
 
     res.json({
       name: c.name,
-      slug: c.slug,
+      slug: c.collection,
       description: c.description,
       image: c.image_url,
-      supply: c.stats?.total_supply ?? null,
-      owners: c.stats?.num_owners ?? null,
-      floorEth: c.stats?.floor_price ?? null,
-      externalUrl: `https://opensea.io/collection/${c.slug}`,
-      updatedAt: new Date().toISOString(),
+      supply: c.total_supply,
+      owners: c.num_owners,
+      floorEth: c.floor_price,
+      externalUrl: `https://opensea.io/collection/${slug}`,
+      updatedAt: new Date().toISOString()
     });
 
   } catch (err) {
-    console.error("OpenSea error:", err);
-    res.status(500).json({ error: "Server error" });
+    console.error("OpenSea API error:", err);
+    res.status(500).json({
+      error: "Failed to fetch OpenSea collection",
+      detail: err.message
+    });
   }
 });
+
 
 
 // ---------- Error handling ----------
