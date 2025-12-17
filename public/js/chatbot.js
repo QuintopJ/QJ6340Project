@@ -1,4 +1,3 @@
-// public/js/chatbot.js
 (function () {
   const container = document.getElementById("chatbot-container");
   if (!container) return;
@@ -10,65 +9,128 @@
   const form = document.getElementById("chatbot-form");
   const input = document.getElementById("chatbot-input");
 
-  if (!windowEl || !toggleBtn || !messagesEl || !form || !input) return;
-
-  function appendMessage(text, sender = "bot") {
+  function addMessage(text, sender = "bot") {
     const div = document.createElement("div");
-    div.classList.add("message", sender);
-    div.textContent = text;
+    div.className = `message ${sender}`;
+    div.innerHTML = text;
     messagesEl.appendChild(div);
     messagesEl.scrollTop = messagesEl.scrollHeight;
   }
 
-  function getBotReply(rawText) {
-    const text = rawText.toLowerCase().trim();
+  // ---------- SITE KNOWLEDGE ----------
+  const SITE_KNOWLEDGE = {
+    owner: "Quinn Harris",
+    theme: "Digital art, neon aesthetics, street culture, and blockchain",
+    purpose:
+      "This site showcases original NFT projects created by Quinn, blending digital art and Web3 concepts.",
+    navigation: {
+      home: "Featured NFT artwork and site introduction",
+      projects: "All NFT collections and individual artworks",
+      about: "Artist background and creative focus",
+      contact: "Direct contact form for inquiries and commissions",
+    },
+  };
 
-    if (!text) return "Try asking me something about NFTs, wallets, or this site.";
-
-    // Very simple "AI-ish" keyword routing for now
-    if (text.includes("nft") || text.includes("token")) {
-      return "An NFT (non-fungible token) is a unique digital asset stored on the blockchain. On this site, my projects are NFTs you can view, learn about, and mint.";
-    }
-
-    if (text.includes("mint")) {
-      return "Minting is the process of creating a new NFT on the blockchain. Once you connect your wallet, you’ll be able to mint directly from the project page when that feature is enabled.";
-    }
-
-    if (text.includes("wallet") || text.includes("metamask")) {
-      return "You can connect a Web3 wallet like MetaMask using the Connect Wallet button in the navbar. Make sure you're on the right network and have some test ETH if you're on a testnet.";
-    }
-
-    if (text.includes("project") || text.includes("collection")) {
-      return "You can explore all current collections on the Projects page. Click into any project card to see details, images, and minting info.";
-    }
-
-    if (text.includes("quinn") || text.includes("you")) {
-      return "I’m Quinn’s on-site AI assistant. I’m here to explain the basics of the project, NFTs, and how to navigate the site.";
-    }
-
-    if (text.includes("contact") || text.includes("email") || text.includes("reach")) {
-      return "You can reach out through the Contact page using the form there. I’m just the chat assistant, but Quinn reads real messages from that form.";
-    }
-
-    if (text.includes("help")) {
-      return "I can help with: what NFTs are, how wallets work, what minting means, and where to find things on this site. Try asking: “What is minting?” or “Where are the projects?”";
-    }
-
-    // Generic fallback
-    return "I may not have a perfect AI answer for that yet, but I can help with NFTs, minting, wallets, and navigating this site. Try asking about one of those, or say “help.”";
+  // ---------- NFT KNOWLEDGE ----------
+  function nftExplanation() {
+    return `
+<strong>What is an NFT?</strong><br>
+An NFT (Non-Fungible Token) is a unique digital asset stored on the blockchain. 
+Unlike cryptocurrencies, NFTs are one-of-a-kind and often represent art, music, or collectibles.
+`;
   }
 
-  toggleBtn.addEventListener("click", () => {
-    const isOpen = windowEl.classList.contains("open");
-    if (!isOpen) {
-      windowEl.classList.add("open");
-      setTimeout(() => input.focus(), 50);
-    } else {
-      windowEl.classList.remove("open");
+  function mintExplanation() {
+    return `
+<strong>What is minting?</strong><br>
+Minting is the process of publishing a digital artwork to the blockchain so it becomes an NFT.
+Once minted, ownership can be verified publicly and transferred securely.
+`;
+  }
+
+  // ---------- PROJECT AWARENESS ----------
+  function projectExplanation() {
+    return `
+<strong>Projects on this site</strong><br>
+Each project represents an original NFT artwork or collection.
+You can explore visuals, concepts, and future minting plans on the Projects page.
+Each artwork is paired with custom imagery and a unique creative concept.
+`;
+  }
+
+  // ---------- AI-STYLE RESPONSE ROUTER ----------
+  function getReply(text) {
+    const q = text.toLowerCase();
+
+    if (!q.trim()) {
+      return "Ask me about NFTs, the projects, or how this site works.";
     }
+
+    if (q.includes("what is nft") || q.includes("what are nfts")) {
+      return nftExplanation();
+    }
+
+    if (q.includes("mint")) {
+      return mintExplanation();
+    }
+
+    if (q.includes("wallet") || q.includes("metamask")) {
+      return `
+<strong>Wallets</strong><br>
+A crypto wallet like MetaMask lets you connect to NFT platforms and manage digital assets.
+When minting is enabled, wallets are required to complete blockchain transactions.
+`;
+    }
+
+    if (q.includes("project") || q.includes("art") || q.includes("collection")) {
+      return projectExplanation();
+    }
+
+    if (q.includes("who") && q.includes("quinn")) {
+      return `
+<strong>About the artist</strong><br>
+${SITE_KNOWLEDGE.owner} is a digital artist focused on neon aesthetics, motion, and blockchain-based art.
+`;
+    }
+
+    if (q.includes("about")) {
+      return `
+<strong>About this site</strong><br>
+${SITE_KNOWLEDGE.purpose}
+`;
+    }
+
+    if (q.includes("contact")) {
+      return `
+You can reach Quinn through the Contact page using the form provided there.
+`;
+    }
+
+    if (q.includes("help")) {
+      return `
+I can help explain:
+<ul>
+  <li>What NFTs are</li>
+  <li>What minting means</li>
+  <li>How wallets work</li>
+  <li>The projects and artwork on this site</li>
+</ul>
+`;
+    }
+
+    return `
+I’m here to help with NFTs, artwork, and navigating this site.
+Try asking about a project, minting, or NFTs in general.
+`;
+  }
+
+  // ---------- EVENTS ----------
+  toggleBtn.addEventListener("click", () => {
+    windowEl.classList.toggle("open");
+    setTimeout(() => input.focus(), 100);
   });
 
-  closeBtn?.addEventListener("click", () => {
+  closeBtn.addEventListener("click", () => {
     windowEl.classList.remove("open");
   });
 
@@ -77,10 +139,16 @@
     const text = input.value.trim();
     if (!text) return;
 
-    appendMessage(text, "user");
+    addMessage(text, "user");
     input.value = "";
 
-    const reply = getBotReply(text);
-    setTimeout(() => appendMessage(reply, "bot"), 250);
+    setTimeout(() => {
+      addMessage(getReply(text), "bot");
+    }, 300);
   });
+
+  // Initial greeting
+  addMessage(
+    "Hey! I’m Quinn’s AI assistant. Ask me about NFTs, the artwork, or how this site works."
+  );
 })();
